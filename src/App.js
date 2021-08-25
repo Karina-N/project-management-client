@@ -6,6 +6,9 @@ import ProjectList from "./components/projects/ProjectList";
 import Navbar from "./components/navbar/Navbar";
 import ProjectDetails from "./components/projects/ProjectDetails";
 import Signup from "./components/auth/Signup";
+import Login from "./components/auth/Login";
+import authService from "./services/auth-service";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 class App extends React.Component {
   state = {
@@ -20,15 +23,40 @@ class App extends React.Component {
     });
   };
 
+  fetchUser = () => {
+    if (this.state.user === null) {
+      authService
+        .loggedin()
+        .then((data) => {
+          this.setState({
+            user: data,
+            isLoggedIn: true,
+          });
+        })
+        .catch((err) => {
+          this.setState({
+            user: null,
+            isLoggedIn: false,
+          });
+        });
+    }
+  };
+
+  componentDidMount() {
+    this.fetchUser();
+  }
+
   render() {
     return (
       <div className="App">
         <h1>Welcome to our project management app</h1>
-        <Navbar userData={this.state.user} userIsLoggedIn={this.state.isLoggedIn} />
+        <Navbar userData={this.state.user} userIsLoggedIn={this.state.isLoggedIn} getUser={this.getTheUser} />
         <Switch>
+          <Route exact path="/" render={(props) => <Login {...props} getUser={this.getTheUser} />} />
           <Route exact path="/signup" render={(props) => <Signup {...props} getUser={this.getTheUser} />} />
-          <Route exact path="/projects" component={ProjectList} />
-          <Route exact path="/projects/:id" component={ProjectDetails} />
+
+          <ProtectedRoute exact path="/projects/:id" user={this.state.user} component={ProjectDetails} />
+          <ProtectedRoute exact path="/projects" user={this.state.user} component={ProjectList} />
         </Switch>
       </div>
     );

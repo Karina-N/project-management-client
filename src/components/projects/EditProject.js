@@ -14,7 +14,11 @@ class EditProject extends Component {
     event.preventDefault();
 
     axios
-      .put(`http://localhost:5000/api/projects/${this.props.theProject._id}`, { title, description })
+      .put(
+        `http://localhost:5000/api/projects/${this.props.theProject._id}`,
+        { title, description },
+        { withCredentials: true }
+      )
       .then(() => {
         // Use the passed down api call to render the updated project data
         this.props.getTheProject();

@@ -14,7 +14,8 @@ class ProjectList extends React.Component {
   }
 
   getAllProjects = () => {
-    axios.get(`http://localhost:5000/api/projects`).then((responseFromApi) => {
+    axios.get(`http://localhost:5000/api/projects`, { withCredentials: true })
+    .then((responseFromApi) => {
       this.setState({
         listOfProjects: responseFromApi.data,
       });
@@ -28,7 +29,6 @@ class ProjectList extends React.Component {
           <Link to={`/projects/${project._id}`}>
             <h3>{project.title}</h3>
           </Link>
-          {/* <p style={{ maxWidth: "400px" }}>{project.description} </p> */}
         </div>
       );
     });
@@ -39,7 +39,11 @@ class ProjectList extends React.Component {
       <>
         <div>{this.state.listOfProjects.length ? this.renderProjects() : "Loading"}</div>
         <hr />
-        <AddProject getData={() => this.getAllProjects()} />
+        {this.props.userIsLoggedIn ? (
+          <AddProject getData={() => this.getAllProjects()} />
+        ) : (
+          <p>Login to create new projects</p>
+        )}
       </>
     );
   }

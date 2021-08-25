@@ -13,7 +13,7 @@ class ProjectDetails extends React.Component {
   getSingleProject = () => {
     const { params } = this.props.match;
     axios
-      .get(`http://localhost:5000/api/projects/${params.id}`)
+      .get(`http://localhost:5000/api/projects/${params.id}`, { withCredentials: true })
       .then((responseFromApi) => {
         const theProject = responseFromApi.data;
         this.setState(theProject);
@@ -32,7 +32,7 @@ class ProjectDetails extends React.Component {
   deleteProject = () => {
     const { params } = this.props.match;
     axios
-      .delete(`http://localhost:5000/api/projects/${params.id}`)
+      .delete(`http://localhost:5000/api/projects/${params.id}`, { withCredentials: true })
       .then(() => {
         this.props.history.push("/projects");
       })
@@ -47,8 +47,13 @@ class ProjectDetails extends React.Component {
         <h1>{this.state.title}</h1>
         <p>{this.state.description}</p>
 
-        <div>{this.renderEditForm()} </div>
-        <button onClick={this.deleteProject}>Delete project</button>
+        {this.props.userData._id === this.state.owner && (
+          <>
+            <div>{this.renderEditForm()} </div>
+            <button onClick={this.deleteProject}>Delete project</button>
+          </>
+        )}
+
         <Link to={"/projects"}>Back to projects</Link>
       </div>
     );
