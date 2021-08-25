@@ -49,7 +49,6 @@ class ProjectDetails extends React.Component {
 
         <div>{this.renderEditForm()} </div>
         <button onClick={this.deleteProject}>Delete project</button>
-        <div>{this.renderAddTaskForm()} </div>
         <Link to={"/projects"}>Back to projects</Link>
       </div>
     );
